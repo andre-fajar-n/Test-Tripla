@@ -3,18 +3,19 @@
 # Default target
 help:
 	@echo "Available commands:"
-	@echo "  setup       - Complete project setup (install + db-setup)"
-	@echo "  install     - Install dependencies"
-	@echo "  db-setup    - Setup database (create + migrate + seed)"
-	@echo "  db-create   - Create databases"
-	@echo "  db-migrate  - Run database migrations"
-	@echo "  db-seed     - Seed database with sample data"
-	@echo "  db-reset    - Reset database (drop + create + migrate + seed)"
-	@echo "  test        - Run all tests"
-	@echo "  test-health - Run health API tests"
-	@echo "  swagger     - Generate Swagger documentation"
-	@echo "  server      - Start Rails server"
-	@echo "  clean       - Clean temporary files"
+	@echo "  setup                 - Complete project setup (install + db-setup)"
+	@echo "  install               - Install dependencies"
+	@echo "  db-setup              - Setup database (create + migrate + seed)"
+	@echo "  db-create             - Create databases"
+	@echo "  db-migrate            - Run database migrations"
+	@echo "  db-seed               - Seed database with sample data"
+	@echo "  db-reset              - Reset database (drop + create + migrate + seed)"
+	@echo "  test                  - Run all tests"
+	@echo "  test-health           - Run health API tests"
+	@echo "  swagger               - Generate Swagger documentation"
+	@echo "  server                - Start Rails server"
+	@echo "  clean                 - Clean temporary files"
+	@echo "  create-file-migration - Create file migration"
 
 # Complete project setup
 setup: install db-setup
@@ -64,3 +65,12 @@ server:
 # Clean temporary files
 clean:
 	rails log:clear tmp:clear
+
+# Create file migration
+create-file-migration:
+	@if [ -z "$(filename)" ]; then \
+		echo "❌ Error: Migration file name cannot be empty. Use 'make create-file-migration filename=YourMigrationName'"; \
+		exit 1; \
+	else \
+		rails generate migration $(filename); \
+	fi
