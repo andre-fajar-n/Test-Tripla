@@ -17,12 +17,12 @@ module TestTripla
   class Application < Rails::Application
     config.load_defaults 7.2
     config.api_only = true
-    
+
     # CORS configuration
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins '*'
-        resource '*', headers: :any, methods: [:get, :post, :put, :patch, :delete, :options, :head]
+        origins "*"
+        resource "*", headers: :any, methods: [ :get, :post, :put, :patch, :delete, :options, :head ]
       end
     end
   end

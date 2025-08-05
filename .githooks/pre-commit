@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Running RuboCop..."
+bin/rubocop
+
+if [ $? -ne 0 ]; then
+  echo "❌ RuboCop found issues. Please fix them before committing."
+  echo "Run 'bin/rubocop -a' or 'make lint-fix' to auto-fix some issues."
+  exit 1
+fi
+
+echo "✅ RuboCop passed!"
+exit 0
