@@ -14,6 +14,12 @@ gem "dotenv-rails"
 gem "sprockets-rails"
 gem "importmap-rails"
 
+# Security
+gem "brakeman"
+
+# Code quality
+gem "rubocop-rails-omakase", require: false
+
 # API Documentation
 gem "rswag"
 gem "rswag-api"
