@@ -1,4 +1,4 @@
-.PHONY: help setup install db-setup db-create db-migrate db-seed db-reset test test-health swagger server clean
+.PHONY: help setup install db-setup db-create db-migrate db-seed db-reset db-disconnect test test-health swagger server clean
 
 # Default target
 help:
@@ -10,6 +10,7 @@ help:
 	@echo "  db-migrate            - Run database migrations"
 	@echo "  db-seed               - Seed database with sample data"
 	@echo "  db-reset              - Reset database (drop + create + migrate + seed)"
+	@echo "  db-disconnect         - Force disconnect all connections"
 	@echo "  test                  - Run all tests"
 	@echo "  test-health           - Run health API tests"
 	@echo "  swagger               - Generate Swagger documentation"
@@ -41,10 +42,19 @@ db-migrate:
 db-seed:
 	rails db:seed
 
-# Reset database
+# Reset database with force disconnect
 db-reset:
-	rails db:drop db:create db:migrate db:seed
-	RAILS_ENV=test rails db:drop db:create db:migrate
+	rails db:drop:_unsafe db:create db:migrate db:seed
+	RAILS_ENV=test rails db:drop:_unsafe db:create db:migrate
+
+# Force disconnect all connections
+db-disconnect:
+	@if [ -z "$(username)" ]; then \
+		echo "❌ Error: Username cannot be empty. Use 'make db-disconnect username=YourUsername'"; \
+		exit 1; \
+	else \
+		psql -h localhost -U $(username) -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname IN ('test_tripla_development', 'test_tripla_test') AND pid <> pg_backend_pid();"; \
+	fi
 
 # Run tests
 test:
