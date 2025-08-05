@@ -1,0 +1,18 @@
+#!/bin/bash
+
+echo "Setting up Git hooks..."
+
+# Create hooks directory if it doesn't exist
+mkdir -p .git/hooks
+
+# Copy pre-commit hook
+cp .githooks/pre-commit .git/hooks/pre-commit
+
+# Make hooks executable
+chmod +x .git/hooks/pre-commit
+chmod +x .githooks/pre-commit
+
+echo "✅ Git hooks installed successfully!"
+echo "Now RuboCop will run automatically before each commit."
+echo ""
+echo "To bypass the hook (not recommended), use: git commit --no-verify"

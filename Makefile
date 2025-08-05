@@ -1,10 +1,13 @@
-.PHONY: help setup install db-setup db-create db-migrate db-seed db-reset db-disconnect test test-health swagger server clean
+.PHONY: help setup install db-setup db-create db-migrate db-seed db-reset db-disconnect test swagger server clean setup-hooks lint create-file-migration
 
 # Default target
 help:
 	@echo "Available commands:"
-	@echo "  setup                 - Complete project setup (install + db-setup)"
+	@echo "  setup                 - Complete project setup (install + db-setup + hooks)"
 	@echo "  install               - Install dependencies"
+	@echo "  setup-hooks           - Setup Git hooks for linting"
+	@echo "  lint                  - Run RuboCop linter"
+	@echo "  lint-fix              - Run RuboCop with auto-fix"
 	@echo "  db-setup              - Setup database (create + migrate + seed)"
 	@echo "  db-create             - Create databases"
 	@echo "  db-migrate            - Run database migrations"
@@ -12,18 +15,30 @@ help:
 	@echo "  db-reset              - Reset database (drop + create + migrate + seed)"
 	@echo "  db-disconnect         - Force disconnect all connections"
 	@echo "  test                  - Run all tests"
-	@echo "  test-health           - Run health API tests"
 	@echo "  swagger               - Generate Swagger documentation"
 	@echo "  server                - Start Rails server"
 	@echo "  clean                 - Clean temporary files"
 	@echo "  create-file-migration - Create file migration"
 
 # Complete project setup
-setup: install db-setup
+setup: install db-setup setup-hooks
 
 # Install dependencies
 install:
 	bundle install
+
+# Setup Git hooks
+setup-hooks:
+	chmod +x bin/setup-hooks
+	./bin/setup-hooks
+
+# Run linter
+lint:
+	bundle exec rubocop
+
+# Run linter with auto-fix
+lint-fix:
+	bundle exec rubocop -a
 
 # Database setup
 db-setup: db-create db-migrate db-seed
@@ -59,10 +74,6 @@ db-disconnect:
 # Run tests
 test:
 	rspec
-
-# Run health API tests
-test-health:
-	rspec spec/requests/api/v1/health_spec.rb
 
 # Generate Swagger documentation
 swagger:
