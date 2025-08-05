@@ -34,11 +34,11 @@ setup-hooks:
 
 # Run linter
 lint:
-	bin/rubocop
+	bundle exec rubocop -f github
 
 # Run linter with auto-fix
 lint-fix:
-	bin/rubocop -a
+	bundle exec rubocop -f github -a
 
 # Database setup
 db-setup: db-create db-migrate db-seed
