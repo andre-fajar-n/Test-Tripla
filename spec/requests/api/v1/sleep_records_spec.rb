@@ -38,6 +38,40 @@ RSpec.describe 'Sleep Records API', type: :request do
         end
       end
     end
+
+    get 'List all sleep records for the current user' do
+      tags 'Sleep Records'
+      produces 'application/json'
+      parameter name: 'X-User-ID', in: :header, type: :string, required: true, description: 'Current user ID'
+
+      response '200', 'successful' do
+        let(:'X-User-ID') { user.id.to_s }
+
+        schema type: :array,
+               items: {
+                 type: :object,
+                 properties: {
+                   id: { type: :integer },
+                   user_id: { type: :integer },
+                   sleep_at: { type: :string },
+                   wake_at: { type: :string, nullable: true },
+                   created_at: { type: :string },
+                   updated_at: { type: :string }
+                 }
+               }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data.size).to eq(2)
+          expect(data.first["id"]).to eq(sleep_record2.id)
+        end
+      end
+
+      response '401', 'unauthorized' do
+        let(:'X-User-ID') { nil }
+        run_test!
+      end
+    end
   end
 
   path '/api/v1/sleep_records/{id}' do
@@ -46,7 +80,8 @@ RSpec.describe 'Sleep Records API', type: :request do
       consumes 'application/json'
       produces 'application/json'
       parameter name: 'X-User-ID', in: :header, type: :string, required: true
-      parameter name: :id, in: :path, type: :integer, required: true
+      # parameter name: :id, in: :path, type: :integer, required: true
+      parameter name: :id, in: :path, required: true, schema: { type: :integer }, style: :simple
 
       response '200', 'wake_at updated' do
         let(:'X-User-ID') { user.id.to_s }

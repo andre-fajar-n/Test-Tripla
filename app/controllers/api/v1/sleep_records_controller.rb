@@ -18,6 +18,11 @@ module Api
         render json: record
       end
 
+      # GET /api/v1/sleep_records
+      def index
+        render json: @current_user.sleep_records.recent_first
+      end
+
       private
 
       def sleep_record_params
