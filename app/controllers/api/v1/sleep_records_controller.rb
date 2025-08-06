@@ -7,14 +7,14 @@ module Api
 
       # POST /api/v1/sleep_records
       def create
-        _record = @current_user.sleep_records.create!(sleep_record_params)
-        render json: @current_user.sleep_records.recent_first, status: :created
+        record = @current_user.sleep_records.create!(sleep_record_params)
+        render json: record, status: :created
       end
 
       # PATCH /api/v1/sleep_records/:id
       def update
         record = filtered_sleep_record
-        record.update!(wake_at: Time.current)
+        record.update!(wake_at: Time.current) if record.wake_at.nil?
         render json: record
       end
 
@@ -26,7 +26,7 @@ module Api
       private
 
       def sleep_record_params
-        params.require(:sleep_record).permit(:sleep_at, :wake_at)
+        params.require(:sleep_record).permit(:sleep_at)
       end
 
       def filtered_sleep_record

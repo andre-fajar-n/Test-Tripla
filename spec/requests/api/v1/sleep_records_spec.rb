@@ -25,7 +25,8 @@ RSpec.describe 'Sleep Records API', type: :request do
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data.first["sleep_at"]).to be_present
+          expect(data["sleep_at"]).to be_present
+          expect(data["wake_at"]).to be_nil
         end
       end
 
@@ -80,7 +81,6 @@ RSpec.describe 'Sleep Records API', type: :request do
       consumes 'application/json'
       produces 'application/json'
       parameter name: 'X-User-ID', in: :header, type: :string, required: true
-      # parameter name: :id, in: :path, type: :integer, required: true
       parameter name: :id, in: :path, required: true, schema: { type: :integer }, style: :simple
 
       response '200', 'wake_at updated' do
