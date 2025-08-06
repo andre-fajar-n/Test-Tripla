@@ -7,6 +7,9 @@ Rails.application.routes.draw do
       get "health", to: "health#check"
 
       resources :sleep_records, only: [ :create, :update, :index ]
+
+      post "follow/:followed_id", to: "follows#create"
+      delete "unfollow/:followed_id", to: "follows#destroy"
     end
   end
 end
