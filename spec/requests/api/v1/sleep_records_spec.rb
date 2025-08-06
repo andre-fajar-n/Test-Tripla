@@ -39,4 +39,30 @@ RSpec.describe 'Sleep Records API', type: :request do
       end
     end
   end
+
+  path '/api/v1/sleep_records/{id}' do
+    patch 'Update a sleep record with wake time (Clock Out)' do
+      tags 'Sleep Records'
+      consumes 'application/json'
+      produces 'application/json'
+      parameter name: 'X-User-ID', in: :header, type: :string, required: true
+      parameter name: :id, in: :path, type: :integer, required: true
+
+      response '200', 'wake_at updated' do
+        let(:'X-User-ID') { user.id.to_s }
+        let(:id) { sleep_record1.id }
+
+        run_test! do |response|
+          data = JSON.parse(response.body)
+          expect(data["wake_at"]).to be_present
+        end
+      end
+
+      response '404', 'not found' do
+        let(:'X-User-ID') { user.id.to_s }
+        let(:id) { 99999 }
+        run_test!
+      end
+    end
+  end
 end
