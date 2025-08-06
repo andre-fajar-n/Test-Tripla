@@ -16,6 +16,18 @@ module Api
         @current_user.following.destroy(followed_user)
         render json: { message: "Unfollowed successfully" }, status: :ok
       end
+
+      # GET /api/v1/followers
+      def followers
+        followers = @current_user.followers.select(:id, :name, :created_at)
+        render json: followers
+      end
+
+      # GET /api/v1/following
+      def following
+        following_users = @current_user.following.select(:id, :name, :created_at)
+        render json: following_users
+      end
     end
   end
 end
