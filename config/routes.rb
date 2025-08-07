@@ -12,6 +12,8 @@ Rails.application.routes.draw do
       delete "unfollow/:followed_id", to: "follows#destroy"
       get "followers", to: "follows#followers"
       get "following", to: "follows#following"
+
+      get "feed", to: "feeds#index"
     end
   end
 end
