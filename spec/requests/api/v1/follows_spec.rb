@@ -9,11 +9,8 @@ RSpec.describe 'Follows API', type: :request do
   let!(:following2) { User.create!(name: "Fiona") }
 
   before do
-    # Follower setup: Charlie & Diana follow Alice
     follower1.following << user
     follower2.following << user
-
-    # Following setup: Alice follows Evan & Fiona
     user.following << following1
     user.following << following2
   end
@@ -23,8 +20,8 @@ RSpec.describe 'Follows API', type: :request do
       tags 'Follows'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :'X-User-ID', in: :header, type: :string, required: true, description: 'Current user ID'
-      parameter name: :followed_id, in: :path, type: :integer, required: true, description: 'ID of the user to follow'
+      parameter name: :'X-User-ID', in: :header, type: :string, required: true
+      parameter name: :followed_id, in: :path, type: :integer, required: true
 
       response '201', 'followed successfully' do
         let(:'X-User-ID') { user.id.to_s }
@@ -54,8 +51,8 @@ RSpec.describe 'Follows API', type: :request do
     delete 'Unfollow a user' do
       tags 'Follows'
       produces 'application/json'
-      parameter name: :'X-User-ID', in: :header, type: :string, required: true, description: 'Current user ID'
-      parameter name: :followed_id, in: :path, type: :integer, required: true, description: 'ID of the user to unfollow'
+      parameter name: :'X-User-ID', in: :header, type: :string, required: true
+      parameter name: :followed_id, in: :path, type: :integer, required: true
 
       response '200', 'unfollowed successfully' do
         let(:'X-User-ID') { user.id.to_s }
@@ -85,20 +82,50 @@ RSpec.describe 'Follows API', type: :request do
     get 'Get list of followers for current user' do
       tags 'Follows'
       produces 'application/json'
-      parameter name: :'X-User-ID', in: :header, type: :string, required: true, description: 'Current user ID'
+      parameter name: :'X-User-ID', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer
+      parameter name: :per_page, in: :query, type: :integer
 
       response '200', 'followers list returned' do
+        schema type: :object,
+               properties: {
+                 data: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       id: { type: :integer },
+                       name: { type: :string },
+                       created_at: { type: :string }
+                     }
+                   }
+                 },
+                 metadata: {
+                   type: :object,
+                   properties: {
+                     current_page: { type: :integer },
+                     total_pages: { type: :integer },
+                     total_count: { type: :integer }
+                   }
+                 }
+               }
+
         let(:'X-User-ID') { user.id.to_s }
+        let(:page) { 1 }
+        let(:per_page) { 10 }
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data.size).to eq(2)
-          expect(data.map { |f| f['name'] }).to include('Charlie', 'Diana')
+          expect(data['data'].size).to eq(2)
+          expect(data['data'].map { |u| u['name'] }).to include('Charlie', 'Diana')
+          expect(data['metadata']['current_page']).to eq(1)
         end
       end
 
       response '401', 'unauthorized' do
         let(:'X-User-ID') { nil }
+        let(:page) { 1 }
+        let(:per_page) { 10 }
         run_test!
       end
     end
@@ -108,20 +135,50 @@ RSpec.describe 'Follows API', type: :request do
     get 'Get list of users current user is following' do
       tags 'Follows'
       produces 'application/json'
-      parameter name: :'X-User-ID', in: :header, type: :string, required: true, description: 'Current user ID'
+      parameter name: :'X-User-ID', in: :header, type: :string, required: true
+      parameter name: :page, in: :query, type: :integer
+      parameter name: :per_page, in: :query, type: :integer
 
       response '200', 'following list returned' do
+        schema type: :object,
+               properties: {
+                 data: {
+                   type: :array,
+                   items: {
+                     type: :object,
+                     properties: {
+                       id: { type: :integer },
+                       name: { type: :string },
+                       created_at: { type: :string }
+                     }
+                   }
+                 },
+                 metadata: {
+                   type: :object,
+                   properties: {
+                     current_page: { type: :integer },
+                     total_pages: { type: :integer },
+                     total_count: { type: :integer }
+                   }
+                 }
+               }
+
         let(:'X-User-ID') { user.id.to_s }
+        let(:page) { 1 }
+        let(:per_page) { 10 }
 
         run_test! do |response|
           data = JSON.parse(response.body)
-          expect(data.size).to eq(2)
-          expect(data.map { |f| f['name'] }).to include('Evan', 'Fiona')
+          expect(data['data'].size).to eq(2)
+          expect(data['data'].map { |u| u['name'] }).to include('Evan', 'Fiona')
+          expect(data['metadata']['total_count']).to eq(2)
         end
       end
 
       response '401', 'unauthorized' do
         let(:'X-User-ID') { nil }
+        let(:page) { 1 }
+        let(:per_page) { 10 }
         run_test!
       end
     end

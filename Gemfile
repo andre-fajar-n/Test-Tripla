@@ -25,6 +25,8 @@ gem "rswag"
 gem "rswag-api"
 gem "rswag-ui"
 
+gem "kaminari"
+
 group :development, :test do
   gem "debug", platforms: [ :mri, :mingw, :x64_mingw ]
   gem "rspec-rails"

@@ -46,17 +46,46 @@ RSpec.describe 'Feeds API', type: :request do
     )
   end
 
-  path '/api/v1/feed' do
+  path '/api/v1/feeds' do
     get 'Get sleep records from followed users (last week, sorted by duration)' do
       tags 'Feeds'
       produces 'application/json'
       parameter name: :'X-User-ID', in: :header, type: :string, required: true, description: 'Current user ID'
+      parameter name: :page, in: :query, type: :integer, required: false, description: 'Page number'
+      parameter name: :per_page, in: :query, type: :integer, required: false, description: 'Items per page'
 
       response '200', 'feed returned successfully' do
+        schema type: :object,
+             properties: {
+               data: {
+                 type: :array,
+                 items: {
+                   type: :object,
+                   properties: {
+                     id: { type: :integer },
+                     user_id: { type: :integer },
+                     user_name: { type: :string },
+                     sleep_at: { type: :string },
+                     wake_at: { type: :string, nullable: true },
+                     duration_seconds: { type: :integer }
+                   }
+                 }
+               },
+               metadata: {
+                 type: :object,
+                 properties: {
+                   current_page: { type: :integer },
+                   total_pages: { type: :integer },
+                   total_count: { type: :integer }
+                 }
+               }
+             }
+
         let(:'X-User-ID') { user.id.to_s }
 
         run_test! do |response|
-          data = JSON.parse(response.body)
+          response_body = JSON.parse(response.body)
+          data = response_body['data']
           names = data.map { |r| r['user_name'] }
 
           # ✅ Only Bob and Charlie should appear
@@ -71,6 +100,11 @@ RSpec.describe 'Feeds API', type: :request do
 
           # ✅ make sure all records have wake_at (not nil)
           expect(data.all? { |r| !r['wake_at'].nil? }).to be true
+
+          metadata = response_body['metadata']
+          expect(metadata['current_page']).to eq(1)
+          expect(metadata['total_pages']).to eq(1)
+          expect(metadata['total_count']).to eq(2)
         end
       end
 

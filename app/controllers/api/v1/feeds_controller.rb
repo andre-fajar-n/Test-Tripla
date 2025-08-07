@@ -14,8 +14,17 @@ module Api
                           .where.not(wake_at: nil)
                           .select("sleep_records.*, EXTRACT(EPOCH FROM (wake_at - sleep_at)) AS duration_seconds")
                           .order("duration_seconds DESC")
+                          .page(params[:page])
+                          .per(params[:per_page] || 10)
 
-        render json: sleep_records.map { |record| sleep_record_json(record) }
+        render json: {
+          data: sleep_records.map { |record| sleep_record_json(record) },
+          metadata: {
+            current_page: sleep_records.current_page,
+            total_pages: sleep_records.total_pages,
+            total_count: sleep_records.total_count
+          }
+        }
       end
 
       private

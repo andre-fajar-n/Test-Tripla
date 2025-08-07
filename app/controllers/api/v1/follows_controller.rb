@@ -21,14 +21,36 @@ module Api
 
       # GET /api/v1/followers
       def followers
-        followers = @current_user.followers.select(:id, :name, :created_at)
-        render json: followers
+        followers = @current_user.followers
+                                 .select(:id, :name, :created_at)
+                                 .page(params[:page])
+                                 .per(params[:per_page] || 10)
+
+        render json: {
+          data: followers,
+          metadata: {
+            current_page: followers.current_page,
+            total_pages: followers.total_pages,
+            total_count: followers.total_count
+          }
+        }
       end
 
       # GET /api/v1/following
       def following
-        following_users = @current_user.following.select(:id, :name, :created_at)
-        render json: following_users
+        following_users = @current_user.following
+                                       .select(:id, :name, :created_at)
+                                       .page(params[:page])
+                                       .per(params[:per_page] || 10)
+
+        render json: {
+          data: following_users,
+          metadata: {
+            current_page: following_users.current_page,
+            total_pages: following_users.total_pages,
+            total_count: following_users.total_count
+          }
+        }
       end
 
       private

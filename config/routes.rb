@@ -13,7 +13,7 @@ Rails.application.routes.draw do
       get "followers", to: "follows#followers"
       get "following", to: "follows#following"
 
-      get "feed", to: "feeds#index"
+      get "feeds", to: "feeds#index"
     end
   end
 end
