@@ -5,6 +5,90 @@ info:
   version: v1
   description: API documentation for Test Tripla application
 paths:
+  "/api/v1/follow/{followed_id}":
+    post:
+      summary: Follow a user
+      tags:
+      - Follows
+      parameters:
+      - name: X-User-ID
+        in: header
+        required: true
+        description: Current user ID
+        schema:
+          type: string
+      - name: followed_id
+        in: path
+        required: true
+        description: ID of the user to follow
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: followed successfully
+        '404':
+          description: user to follow not found
+        '401':
+          description: unauthorized
+  "/api/v1/unfollow/{followed_id}":
+    delete:
+      summary: Unfollow a user
+      tags:
+      - Follows
+      parameters:
+      - name: X-User-ID
+        in: header
+        required: true
+        description: Current user ID
+        schema:
+          type: string
+      - name: followed_id
+        in: path
+        required: true
+        description: ID of the user to unfollow
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: unfollowed successfully
+        '404':
+          description: user to unfollow not found
+        '401':
+          description: unauthorized
+  "/api/v1/followers":
+    get:
+      summary: Get list of followers for current user
+      tags:
+      - Follows
+      parameters:
+      - name: X-User-ID
+        in: header
+        required: true
+        description: Current user ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: followers list returned
+        '401':
+          description: unauthorized
+  "/api/v1/following":
+    get:
+      summary: Get list of users current user is following
+      tags:
+      - Follows
+      parameters:
+      - name: X-User-ID
+        in: header
+        required: true
+        description: Current user ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: following list returned
+        '401':
+          description: unauthorized
   "/api/v1/health":
     get:
       summary: Health check endpoint
