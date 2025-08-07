@@ -9,7 +9,7 @@ module Api
 
         sleep_records = SleepRecord
                           .joins(:user)
-                          .where(user: { id: @current_user.following.ids })
+                          .where(user: { id: @current_user.following.select(:id) })
                           .where("sleep_at >= ?", one_week_ago)
                           .where.not(wake_at: nil)
                           .select("sleep_records.*, EXTRACT(EPOCH FROM (wake_at - sleep_at)) AS duration_seconds")
