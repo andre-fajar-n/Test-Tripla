@@ -5,6 +5,23 @@ info:
   version: v1
   description: API documentation for Test Tripla application
 paths:
+  "/api/v1/feed":
+    get:
+      summary: Get sleep records from followed users (last week, sorted by duration)
+      tags:
+      - Feeds
+      parameters:
+      - name: X-User-ID
+        in: header
+        required: true
+        description: Current user ID
+        schema:
+          type: string
+      responses:
+        '200':
+          description: feed returned successfully
+        '401':
+          description: unauthorized
   "/api/v1/follow/{followed_id}":
     post:
       summary: Follow a user
