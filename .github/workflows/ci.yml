@@ -50,23 +50,8 @@ jobs:
           ruby-version: .ruby-version
           bundler-cache: true
 
-      - name: Dump RuboCop config
-        run: bundle exec rubocop --show-cops --config .rubocop.yml > rubocop_ci.txt
-
-      - name: Upload RuboCop config artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: rubocop-ci-config
-          path: rubocop_ci.txt
-
       - name: Run RuboCop lint
-        run: bundle exec rubocop -f github | tee rubocop_ci_output.txt
-
-      - name: Upload RuboCop lint result
-        uses: actions/upload-artifact@v4
-        with:
-          name: rubocop-ci-output
-          path: rubocop_ci_output.txt
+        run: bundle exec rubocop -f github
 
   test:
     runs-on: ubuntu-latest
