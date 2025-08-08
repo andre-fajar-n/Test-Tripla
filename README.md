@@ -103,6 +103,25 @@ Reduces load on the primary database.
 
 ---
 
+
+## 6. Asynchronous Processing
+
+**Description:**  
+Offload heavy tasks (e.g., calculating top sleep rankings) to background jobs using Sidekiq or similar.
+
+**Impact:**  
+Improves API responsiveness and system stability.
+
+**Trade-offs:**
+
+| Pros                                     | Cons                                  |
+|------------------------------------------|---------------------------------------|
+| Keeps user experience fast and smooth    | Adds architectural complexity         |
+| Jobs can be retried and scaled separately | Requires queue management and monitoring |
+
+---
+
+
 ## Summary Table
 
 | Strategy              | Purpose                                         | Pros                                         | Cons                                   |
@@ -112,6 +131,8 @@ Reduces load on the primary database.
 | **Caching**           | Reduce repeated queries                         | Handles high read traffic efficiently        | Stale data risk; cache infra needed    |
 | **Pagination & Limit**| Reduce data processed/transferred               | Lower memory usage; faster responses         | Client handles pagination              |
 | **Read-Replica DB**   | Distribute read load                            | Scales horizontally for reads                | Replication lag; infra complexity      |
+| **Async Processing**  | Offload heavy tasks                             | Keeps API responsive                         | Adds complexity                        |
+
 
 ---
 
