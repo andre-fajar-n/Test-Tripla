@@ -5,7 +5,7 @@ ruby "3.3.5"
 
 gem "rails", "~> 8.0.2"
 gem "pg", "~> 1.1"
-gem "puma", "~> 6.0"
+gem "puma", "~> 7.1"
 gem "bootsnap", ">= 1.4.4", require: false
 gem "rack-cors"
 gem "dotenv-rails"
